@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+//Key is encrypted username and password
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  key           String
+  firebaseToken String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  Homeworks Homeworks[]
+  Marks     Marks[]
+}
+
+model Homeworks {
+  id            Int    @id @default(autoincrement())
+  userFireToken String @unique
+  data          Json
+
+  User User @relation(fields: [userFireToken], references: [firebaseToken])
+}
+
+model Marks {
+  id            Int    @id @default(autoincrement())
+  userFireToken String @unique
+  data          Json
+
+  User User @relation(fields: [userFireToken], references: [firebaseToken])
+}

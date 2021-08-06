@@ -1,0 +1,28 @@
+{
+  "name": "proxy2.0",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "2.28.0",
+    "dotenv": "^10.0.0",
+    "fastify": "^3.20.1",
+    "firebase-admin": "^9.11.0",
+    "graphql": "^15.5.1",
+    "jsondiffpatch": "^0.4.1",
+    "mercurius": "^8.1.1",
+    "mz": "^2.7.0",
+    "node-fetch": "^2.6.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12",
+    "nodemon": "^2.0.12",
+    "prisma": "2.28.0"
+  },
+  "scripts": {
+    "start": "nodemon --exec ts-node --transpile-only app.ts",
+    "gbs": "ts-node-transpile-only scripts/generateGqlSchemas.ts"
+  }
+}

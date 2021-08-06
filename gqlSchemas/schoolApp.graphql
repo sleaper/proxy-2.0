@@ -1,0 +1,27 @@
+type Query {
+  UserInfo(key: String!, name: String!): UserInfo!
+}
+
+type UserInfo {
+  Status: Status!
+  Data: UserInfoData!
+}
+
+"""Status from SkolaOnline servers"""
+type Status {
+  Code: String!
+  Message: String!
+  Details: String
+}
+
+type UserInfoData {
+  DATABASE_ID: String!
+  ORGANIZACE_ID: String!
+  OSOBA_ID: String!
+  UZIVATEL_ID: String!
+  UZIV_JMENO: String!
+  KATEGORIE_ID_CSV: String!
+  JMENO: String!
+  TRIDA_ID: String!
+  TRIDA_NAZEV: String!
+}
