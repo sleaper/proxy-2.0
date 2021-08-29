@@ -5,7 +5,9 @@ import mercurius from 'mercurius'
 import { schema } from './schemas/schema'
 
 async function main() {
-  const app = fastify()
+  const app = fastify({
+    logger: true
+  })
 
   app.register(mercurius, {
     schema,

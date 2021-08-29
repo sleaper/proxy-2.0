@@ -12,9 +12,9 @@ generator client {
 
 //Key is encrypted username and password
 model User {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(uuid())
   name          String
-  key           String
+  key           String   @unique
   firebaseToken String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -24,7 +24,7 @@ model User {
 }
 
 model Homeworks {
-  id            Int    @id @default(autoincrement())
+  id            String @id @default(uuid())
   userFireToken String @unique
   data          Json
 
@@ -32,7 +32,7 @@ model Homeworks {
 }
 
 model Marks {
-  id            Int    @id @default(autoincrement())
+  id            String @id @default(uuid())
   userFireToken String @unique
   data          Json
 

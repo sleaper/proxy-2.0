@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from 'type-graphql'
+import { Field, InputType, Int, ObjectType } from 'type-graphql'
 
 @ObjectType({ description: 'Object representing cooking recipe' })
 export class Recipe {
@@ -70,14 +70,11 @@ export class Subject {
   PRIZNAK_DRUH_PREDMETU: string
 
   @Field(() => String)
-  VAHA: string
-
-  @Field(() => String)
   PORADI_ZOBRAZENI: string
 }
 
 @ObjectType()
-export class SubjectMarks {
+export class Marks {
   @Field(() => String)
   name: string
 
@@ -95,4 +92,61 @@ export class SubjectMarks {
 
   @Field(() => Subject)
   subject: Subject
+}
+
+@ObjectType()
+export class Report {
+  @Field(() => String)
+  id: string
+
+  @Field(() => String)
+  subject: string
+
+  @Field(() => String)
+  marks: string
+}
+
+@ObjectType()
+export class ScheduleEvent {
+  @Field(() => String)
+  name: string
+
+  @Field(() => String)
+  timeFrom: string
+
+  @Field(() => String)
+  timeTo: string
+
+  @Field(() => String)
+  room: string
+
+  @Field(() => String)
+  teacher: string
+
+  @Field(() => String)
+  subjectNum: string
+
+  @Field(() => String)
+  subjectId: string
+
+  @Field(() => String)
+  order: string
+
+  @Field(() => String)
+  color: string
+}
+
+@ObjectType()
+export class AvarageMark {
+  @Field(() => String)
+  subject: string
+
+  @Field(() => String)
+  teacher: string
+
+  @Field(() => String)
+  marks: string
+
+  @Field(() => String)
+  id: string
 }

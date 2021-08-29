@@ -197,7 +197,9 @@ export async function fetchIndividualMarks(date, key) {
       Id: item.UDALOST_ID,
       Value: types.find((t2) => t2.DRUH_HODNOCENI_ID === item.DRUH_HODNOCENI_ID)
     }
-  }).sort((a: any, b: any) => new Date(b.Date) - new Date(a.Date))
+  })
+    //@ts-expect-error
+    .sort((a: any, b: any) => new Date(b.Date) - new Date(a.Date))
   return marks
 }
 
