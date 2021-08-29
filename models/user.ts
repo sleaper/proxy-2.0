@@ -329,22 +329,17 @@ export class UserMutation extends UserBase {
     @Arg('payload') payload: string,
     @Arg('firebaseToken') firebaseToken: string
   ) {
-    try {
-      await prisma.homeworks.upsert({
-        create: {
-          data: payload,
-          userFireToken: firebaseToken
-        },
-        where: {
-          userFireToken: firebaseToken
-        },
-        update: {
-          data: payload
-        }
-      })
-    } catch (err) {
-      console.log(err)
-      return false
-    }
+    return await prisma.homeworks.upsert({
+      create: {
+        data: payload,
+        userFireToken: firebaseToken
+      },
+      where: {
+        userFireToken: firebaseToken
+      },
+      update: {
+        data: payload
+      }
+    })
   }
 }

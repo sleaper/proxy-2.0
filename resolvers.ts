@@ -1,7 +1,7 @@
 import { Query, Resolver, Arg, Mutation } from 'type-graphql'
 import fetch from 'node-fetch'
 import { prisma } from './prisma'
-import { UserMutation, UserQuery } from './models/user'
+import { UserBase, UserMutation, UserQuery } from './models/user'
 
 // export interface IContext {
 //   request: RawRequestDefaultExpression
@@ -63,6 +63,20 @@ export class RootResolver {
       return true
     } catch (err) {
       console.log(err)
+      return false
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async removeUser(@Arg('firebaseToken') firebaseToken: string) {
+    try {
+      await prisma.user.delete({
+        where: {
+          firebaseToken: firebaseToken
+        }
+      })
+      return true
+    } catch (err) {
       return false
     }
   }

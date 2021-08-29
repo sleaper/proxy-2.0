@@ -7,7 +7,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 //Key is encrypted username and password
@@ -28,7 +29,7 @@ model Homeworks {
   userFireToken String @unique
   data          Json
 
-  User User @relation(fields: [userFireToken], references: [firebaseToken])
+  User User @relation(fields: [userFireToken], references: [firebaseToken], onDelete: Cascade)
 }
 
 model Marks {
@@ -36,5 +37,5 @@ model Marks {
   userFireToken String @unique
   data          Json
 
-  User User @relation(fields: [userFireToken], references: [firebaseToken])
+  User User @relation(fields: [userFireToken], references: [firebaseToken], onDelete: Cascade)
 }
