@@ -1,27 +1,95 @@
 type Query {
-  UserInfo(key: String!, name: String!): UserInfo!
+  user(key: String!): UserQuery!
+  UserAuth(key: String!): Boolean!
+}
+
+"""Object representing user"""
+type UserQuery {
+  name: String!
+  key: String!
+  firebaseToken: String!
+  id: String!
+  info: UserInfo!
+  subjectMarks(subject: String!): [Marks!]!
+  report: [Report!]!
+  marks(date: Date!): [Marks!]!
+  daySchedule: [ScheduleEvent!]!
+  homeworks: [String!]!
+  avarageMarks: [AvarageMark!]!
 }
 
 type UserInfo {
-  Status: Status!
-  Data: UserInfoData!
+  name: String!
+  className: String!
+  personId: String!
+  id: String!
 }
 
-"""Status from SkolaOnline servers"""
-type Status {
-  Code: String!
-  Message: String!
-  Details: String
+type Marks {
+  name: String!
+  mark: String!
+  date: String!
+  id: String!
+  value: Value!
+  subject: Subject!
 }
 
-type UserInfoData {
-  DATABASE_ID: String!
-  ORGANIZACE_ID: String!
-  OSOBA_ID: String!
-  UZIVATEL_ID: String!
-  UZIV_JMENO: String!
-  KATEGORIE_ID_CSV: String!
-  JMENO: String!
-  TRIDA_ID: String!
-  TRIDA_NAZEV: String!
+type Value {
+  DRUH_HODNOCENI_ID: String!
+  NAZEV: String!
+  POPIS: String!
+  VAHA: String!
+  PORADI_ZOBRAZENI: String!
+}
+
+type Subject {
+  SKOLNI_ROK_ID: String!
+  PREDMET_ID: String!
+  ZKRATKA: String!
+  NAZEV: String!
+  PRIZNAK_DRUH_PREDMETU: String!
+  PORADI_ZOBRAZENI: String!
+}
+
+type Report {
+  id: String!
+  subject: String!
+  marks: String!
+}
+
+input Date {
+  date: [String!]!
+}
+
+type ScheduleEvent {
+  name: String!
+  timeFrom: String!
+  timeTo: String!
+  room: String!
+  teacher: String!
+  subjectNum: String!
+  id: String!
+  order: String!
+  color: String!
+}
+
+type AvarageMark {
+  subject: String!
+  teacher: String!
+  marks: String!
+  id: String!
+}
+
+type Mutation {
+  user(key: String!): UserMutation!
+  addUser(firebaseToken: String!, key: String!, name: String!): Boolean!
+  removeUser(firebaseToken: String!): Boolean!
+}
+
+type UserMutation {
+  name: String!
+  key: String!
+  firebaseToken: String!
+  id: String!
+  saveHomeworks(firebaseToken: String!, payload: String!): String!
 }

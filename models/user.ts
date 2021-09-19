@@ -22,6 +22,9 @@ export class UserBase {
 
   @Field(() => String)
   firebaseToken: string
+
+  @Field(() => String)
+  id: string
 }
 
 @InputType()
@@ -34,6 +37,7 @@ export class Date {
 export class UserQuery extends UserBase {
   @Field(() => UserInfo)
   async info() {
+    console.log(this)
     let data = await fetch(
       'https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo',
       {
@@ -52,7 +56,8 @@ export class UserQuery extends UserBase {
     return {
       name: data.Data.JMENO,
       className: data.Data.TRIDA_NAZEV,
-      personId: data.Data.OSOBA_ID
+      personId: data.Data.OSOBA_ID,
+      id: this.id
     }
   }
 
@@ -176,9 +181,9 @@ export class UserQuery extends UserBase {
   }
 
   @Field(() => [ScheduleEvent])
-  async daySchedule(@Arg('date') date: string) {
+  async daySchedule() {
     const day = await fetch(
-      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/RozvrhoveUdalosti/${date}`,
+      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/RozvrhoveUdalosti/${getDate()}`,
       {
         headers: {
           Authorization: `Basic ${this.key}`,
@@ -222,7 +227,7 @@ export class UserQuery extends UserBase {
             ' ' +
             t1.UCITELE_UDALOSTI[0].PRIJMENI,
           subjectNum: t1.UDALOST_ID,
-          subjectId: t1.UDALOST_ID + t1.OBDOBI_DNE_OD_ID,
+          id: t1.UDALOST_ID + t1.OBDOBI_DNE_OD_ID,
           order: t1.OBDOBI_DNE_OD_ID,
           color: chooseColor(t1.NAZEV)
         }
@@ -232,7 +237,7 @@ export class UserQuery extends UserBase {
     let final = editedLessons.map((item) => {
       return {
         ...item,
-        Events: editedEvents.find((t2) => {
+        events: editedEvents.find((t2) => {
           if (t2.order === item.order || t2.secondOrder === item.order) {
             // Max 2 hours long event
             return true
@@ -245,7 +250,7 @@ export class UserQuery extends UserBase {
   }
 
   //Need types here
-  @Field(() => String)
+  @Field(() => [String])
   async homeworks() {
     let homeworks = await prisma.homeworks.findFirst({
       where: {

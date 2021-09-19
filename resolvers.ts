@@ -52,12 +52,31 @@ export class RootResolver {
     @Arg('key') key: string,
     @Arg('firebaseToken') firebaseToken: string
   ) {
+    // try {
+    //   await prisma.user.create({
+    //     data: {
+    //       name: name,
+    //       key: key,
+    //       firebaseToken: firebaseToken
+    //     }
+    //   })
+    //   return true
+    // } catch (err) {
+    //   console.log(err)
+    //   return false
+    // }
     try {
-      await prisma.user.create({
-        data: {
+      await prisma.user.upsert({
+        create: {
           name: name,
           key: key,
           firebaseToken: firebaseToken
+        },
+        update: {
+          firebaseToken: firebaseToken
+        },
+        where: {
+          key: key
         }
       })
       return true
@@ -80,28 +99,4 @@ export class RootResolver {
       return false
     }
   }
-
-  // @Mutation(() => Boolean)
-  // async saveHomeworks(
-  //   @Arg('payload') payload: string,
-  //   @Arg('firebaseToken') firebaseToken: string
-  // ) {
-  //   try {
-  //     await prisma.homeworks.upsert({
-  //       create: {
-  //         data: payload,
-  //         userFireToken: firebaseToken
-  //       },
-  //       where: {
-  //         userFireToken: firebaseToken
-  //       },
-  //       update: {
-  //         data: payload
-  //       }
-  //     })
-  //   } catch (err) {
-  //     console.log(err)
-  //     return false
-  //   }
-  // }
 }

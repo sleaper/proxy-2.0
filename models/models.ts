@@ -32,6 +32,9 @@ export class UserInfo {
 
   @Field(() => String)
   personId: string
+
+  @Field(() => String)
+  id: string
 }
 
 @ObjectType()
@@ -127,7 +130,7 @@ export class ScheduleEvent {
   subjectNum: string
 
   @Field(() => String)
-  subjectId: string
+  id: string
 
   @Field(() => String)
   order: string
