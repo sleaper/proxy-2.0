@@ -1,4 +1,10 @@
-import { AvarageMarkTypes, Event, Mark } from './../util/api-types'
+import {
+  AvarageMarkTypes,
+  CalendarDayTypes,
+  Event,
+  Mark,
+  NoteTypes
+} from './../util/api-types'
 import { Arg, Field, InputType, Int, ObjectType } from 'type-graphql'
 import { subjects } from '../subjects'
 import {
@@ -9,7 +15,14 @@ import {
   types
 } from '../util/utilz'
 import fetch from 'node-fetch'
-import { AvarageMark, Marks, Report, ScheduleEvent, UserInfo } from './models'
+import {
+  AvarageMark,
+  Marks,
+  Report,
+  ScheduleEvent,
+  UserInfo,
+  CalendarDay
+} from './models'
 import { prisma } from '../prisma'
 
 @ObjectType()
@@ -243,6 +256,84 @@ export class UserQuery extends UserBase {
             return true
           }
         })
+      }
+    })
+
+    return final
+  }
+
+  @Field(() => [CalendarDay])
+  async calendarDay(@Arg('date') date: string) {
+    console.log(date)
+    const data = await fetch(
+      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/RozvrhoveUdalosti/${date}`,
+      {
+        headers: {
+          Authorization: `Basic ${this.key}`,
+          Base64: '1'
+        }
+      }
+    ).then((response) => response.json())
+
+    const notes = await fetch(
+      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/PoznamkyKHodine?datumOd=${date}&datumDo=${date}`,
+      {
+        headers: {
+          Authorization: `Basic ${this.key}`,
+          Base64: '1'
+        }
+      }
+    )
+      .then((res) => res.json())
+      .catch((err) => console.error())
+
+    const editedNotes = notes.Data.map((t1: NoteTypes) => {
+      return {
+        note: t1.POZNAMKA,
+        order: t1.OBDOBI_DNE_ID
+      }
+    })
+
+    let events: [Event | null] = [null]
+
+    const lessons: [Event] = data.Data.UDALOSTI.filter((item: Event) => {
+      if (item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH') {
+        events.push(item)
+        return false
+      }
+      return true
+    })
+
+    let editedLessons = lessons.map((item) => {
+      return {
+        name: /\(([^)]+)\)/.exec(item.NAZEV)[1], //For the name just between the brackets
+        from: item.CAS_OD.substring(11, 16), // get just starting time
+        to: item.CAS_DO,
+        class: item.MISTNOSTI_UDALOSTI[0].NAZEV,
+        teacher:
+          item.UCITELE_UDALOSTI[0].JMENO +
+          ' ' +
+          item.UCITELE_UDALOSTI[0].PRIJMENI,
+        id: item.UDALOST_ID,
+        order: item.OBDOBI_DNE_OD_ID
+      }
+    })
+
+    let editedEvents = events.map((t1) => {
+      return {
+        event: t1?.NAZEV,
+        order: t1?.OBDOBI_DNE_OD_ID,
+        color: t1?.BARVA
+      }
+    })
+
+    let final = editedLessons.map((item) => {
+      return {
+        ...item,
+        events: editedEvents.find((t2) => t2.order === item.order),
+        notes: editedNotes.find(
+          (t2: { order: string; note: string }) => t2.order === item.order
+        )
       }
     })
 

@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from 'type-graphql'
+import { Field, ID, InputType, Int, ObjectType } from 'type-graphql'
 
 @ObjectType({ description: 'Object representing cooking recipe' })
 export class Recipe {
@@ -152,4 +152,53 @@ export class AvarageMark {
 
   @Field(() => String)
   id: string
+}
+@ObjectType()
+export class Notes {
+  @Field(() => String, { nullable: true })
+  note: string
+
+  @Field(() => String, { nullable: true })
+  order: string
+}
+
+@ObjectType()
+export class Events {
+  @Field(() => String, { nullable: true })
+  event: string
+
+  @Field(() => String, { nullable: true })
+  order: string
+
+  @Field(() => String, { nullable: true })
+  color: string
+}
+@ObjectType()
+export class CalendarDay {
+  @Field(() => String)
+  name: string
+
+  @Field(() => String)
+  from: string
+
+  @Field(() => String)
+  to: string
+
+  @Field(() => String)
+  class: string
+
+  @Field(() => String)
+  teacher: string
+
+  @Field(() => ID)
+  id: string
+
+  @Field(() => String)
+  order: string
+
+  @Field(() => Notes, { nullable: true })
+  notes: Notes
+
+  @Field(() => Events, { nullable: true })
+  events: Events
 }

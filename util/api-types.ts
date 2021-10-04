@@ -104,3 +104,42 @@ export interface UciteleUdalosti {
   ZKRATKA: string
   PRIZNAK_ABSENCE: boolean
 }
+
+export interface CalendarDayTypes {
+  Name: string
+  From: string
+  To: Date
+  Class: string
+  Teacher: string
+  Id: string
+  Order: string
+  Notes?: Notes
+  Events?: Events
+}
+
+export interface Events {
+  Event: string
+  Order: string
+  Color: string
+}
+
+export interface Notes {
+  Note: string
+  Order: string
+}
+
+export interface NoteTypes {
+  POZNAMKA_ID: string
+  DATUM: Date
+  OBDOBI_DNE_ID: string
+  OBDOBI_DNE_NAZEV: string
+  OBDOBI_DNE_PORADI_ZOBRAZENI: number
+  OBDOBI_DNE_CAS_OD: Date
+  OBDOBI_DNE_CAS_DO: Date
+  PREDMET_ID: string
+  PREDMET_NAZEV: string
+  PREDMET_ZKRATKA: string
+  UCITEL_ID: string
+  UCITEL_NAZEV: string
+  POZNAMKA: string
+}
