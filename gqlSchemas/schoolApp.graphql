@@ -14,6 +14,7 @@ type UserQuery {
   report: [Report!]!
   marks(date: Date!): [Marks!]!
   daySchedule: [ScheduleEvent!]!
+  calendarDay(date: String!): [CalendarDay!]!
   homeworks: [String!]!
   avarageMarks: [AvarageMark!]!
 }
@@ -71,6 +72,29 @@ type ScheduleEvent {
   id: String!
   order: String!
   color: String!
+}
+
+type CalendarDay {
+  name: String!
+  from: String!
+  to: String!
+  class: String!
+  teacher: String!
+  id: String!
+  order: String!
+  notes: Notes
+  events: Events
+}
+
+type Notes {
+  note: String
+  order: String
+}
+
+type Events {
+  event: String
+  order: String
+  color: String
 }
 
 type AvarageMark {
