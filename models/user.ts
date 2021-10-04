@@ -1,19 +1,7 @@
-import {
-  AvarageMarkTypes,
-  CalendarDayTypes,
-  Event,
-  Mark,
-  NoteTypes
-} from './../util/api-types'
-import { Arg, Field, InputType, Int, ObjectType } from 'type-graphql'
+import { AvarageMarkTypes, Event, Mark, NoteTypes } from './../util/api-types'
+import { Arg, Field, InputType, ObjectType } from 'type-graphql'
 import { subjects } from '../subjects'
-import {
-  chooseColor,
-  fetchIndividualMarks,
-  getDate,
-  getStartEndOfWeek,
-  types
-} from '../util/utilz'
+import { chooseColor, getDate, types } from '../util/utilz'
 import fetch from 'node-fetch'
 import {
   AvarageMark,
@@ -306,7 +294,9 @@ export class UserQuery extends UserBase {
 
     let editedLessons = lessons.map((item) => {
       return {
+        //@ts-expect-error
         name: /\(([^)]+)\)/.exec(item.NAZEV)[1], //For the name just between the brackets
+        //@ts-expect-error
         from: item.CAS_OD.substring(11, 16), // get just starting time
         to: item.CAS_DO,
         class: item.MISTNOSTI_UDALOSTI[0].NAZEV,
