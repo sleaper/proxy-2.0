@@ -1,18 +1,12 @@
 import { Query, Resolver, Arg, Mutation } from 'type-graphql'
 import fetch from 'node-fetch'
 import { prisma } from './prisma'
-import { UserBase, UserMutation, UserQuery } from './models/user'
+import { UserMutation, UserQuery } from './models/user'
 
 // export interface IContext {
 //   request: RawRequestDefaultExpression
 //   reply: FastifyReply
 //   payload?: { userId: string }
-// }
-
-// export interface Payload {
-//   userId: string
-//   iat: number
-//   exp: number
 // }
 
 @Resolver()
@@ -52,19 +46,6 @@ export class RootResolver {
     @Arg('key') key: string,
     @Arg('firebaseToken') firebaseToken: string
   ) {
-    // try {
-    //   await prisma.user.create({
-    //     data: {
-    //       name: name,
-    //       key: key,
-    //       firebaseToken: firebaseToken
-    //     }
-    //   })
-    //   return true
-    // } catch (err) {
-    //   console.log(err)
-    //   return false
-    // }
     try {
       await prisma.user.upsert({
         create: {

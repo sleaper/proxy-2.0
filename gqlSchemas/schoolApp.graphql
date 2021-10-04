@@ -80,7 +80,7 @@ type CalendarDay {
   to: String!
   class: String!
   teacher: String!
-  id: String!
+  id: ID!
   order: String!
   notes: Notes
   events: Events
