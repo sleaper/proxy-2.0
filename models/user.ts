@@ -1,7 +1,7 @@
 import { AvarageMarkTypes, Event, Mark, NoteTypes } from './../util/api-types'
 import { Arg, Field, InputType, ObjectType } from 'type-graphql'
 import { subjects } from '../subjects'
-import { chooseColor, getDate, types } from '../util/utilz'
+import { chooseColor, findName, getDate, types } from '../util/utilz'
 import fetch from 'node-fetch'
 import {
   AvarageMark,
@@ -38,7 +38,6 @@ export class Date {
 export class UserQuery extends UserBase {
   @Field(() => UserInfo)
   async info() {
-    console.log(this)
     let data = await fetch(
       'https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo',
       {
@@ -198,8 +197,11 @@ export class UserQuery extends UserBase {
     const events: [Event] | [] = []
 
     // filter events and lessons
-    const lessons = day.Data.UDALOSTI.filter((item: Event) => {
-      if (item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH') {
+    const lessons: [Event] = day.Data.UDALOSTI.filter((item: Event) => {
+      if (
+        item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH' &&
+        item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'SUPLOVANI'
+      ) {
         //@ts-expect-error
         events.push(item)
         return false
@@ -217,25 +219,23 @@ export class UserQuery extends UserBase {
     })
 
     const editedLessons = lessons.map((t1) => {
-      if (t1.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'ROZVRH') {
-        return {
-          name: t1.NAZEV,
-          timeFrom: t1.CAS_OD,
-          timeTo: t1.CAS_DO,
-          room: t1.MISTNOSTI_UDALOSTI[0].NAZEV,
-          teacher:
-            t1.UCITELE_UDALOSTI[0].JMENO +
-            ' ' +
-            t1.UCITELE_UDALOSTI[0].PRIJMENI,
-          subjectNum: t1.UDALOST_ID,
-          id: t1.UDALOST_ID + t1.OBDOBI_DNE_OD_ID,
-          order: t1.OBDOBI_DNE_OD_ID,
-          color: chooseColor(t1.NAZEV)
-        }
+      return {
+        name: t1.NAZEV,
+        timeFrom: t1.CAS_OD,
+        timeTo: t1.CAS_DO,
+        room: t1.MISTNOSTI_UDALOSTI[0].NAZEV,
+        teacher:
+          t1.UCITELE_UDALOSTI[0].JMENO + ' ' + t1.UCITELE_UDALOSTI[0].PRIJMENI,
+        subjectNum: t1.UDALOST_ID,
+        id: t1.UDALOST_ID + t1.OBDOBI_DNE_OD_ID,
+        order: t1.OBDOBI_DNE_OD_ID,
+        color: '#262626', // <==== Color is Hard Coded
+        backUp: t1.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false
       }
     })
     // This combines Events and normal lessons
-    let final = editedLessons.map((item) => {
+    let final = editedLessons.map((item: any) => {
+      console.log(item)
       return {
         ...item,
         events: editedEvents.find((t2) => {
@@ -285,7 +285,10 @@ export class UserQuery extends UserBase {
     let events: [Event | null] = [null]
 
     const lessons: [Event] = data.Data.UDALOSTI.filter((item: Event) => {
-      if (item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH') {
+      if (
+        item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH' &&
+        item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'SUPLOVANI'
+      ) {
         events.push(item)
         return false
       }
@@ -294,8 +297,7 @@ export class UserQuery extends UserBase {
 
     let editedLessons = lessons.map((item) => {
       return {
-        //@ts-expect-error
-        name: /\(([^)]+)\)/.exec(item.NAZEV)[1], //For the name just between the brackets
+        name: findName(item.NAZEV),
         //@ts-expect-error
         from: item.CAS_OD.substring(11, 16), // get just starting time
         to: item.CAS_DO,
@@ -304,8 +306,9 @@ export class UserQuery extends UserBase {
           item.UCITELE_UDALOSTI[0].JMENO +
           ' ' +
           item.UCITELE_UDALOSTI[0].PRIJMENI,
-        id: item.UDALOST_ID,
-        order: item.OBDOBI_DNE_OD_ID
+        id: item.UDALOST_ID + item.PORADI,
+        order: item.OBDOBI_DNE_OD_ID,
+        backUp: item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false
       }
     })
 

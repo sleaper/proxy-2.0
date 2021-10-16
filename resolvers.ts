@@ -14,12 +14,14 @@ export class RootResolver {
   @Query(() => UserQuery)
   @Mutation(() => UserMutation)
   async user(@Arg('key') key: string) {
+    //We need upsert here
+    // We call this on login, even when user is not in the DB
     let user = await prisma.user.findFirst({
       where: {
         key: key
       }
     })
-
+    console.log(user)
     return user
   }
 

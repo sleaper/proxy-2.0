@@ -339,6 +339,15 @@ function comparer(otherArray) {
   }
 }
 
+export function findName(string: string): string {
+  if (string.length > 30) {
+    return string.substring(0, 3)
+  } else {
+    //@ts-expect-error
+    return /\(([^)]+)\)/.exec(string)[1]
+  }
+}
+
 // for comparing
 export function Diffs(newData, oldData) {
   return newData.filter(comparer(oldData))

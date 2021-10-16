@@ -137,6 +137,9 @@ export class ScheduleEvent {
 
   @Field(() => String)
   color: string
+
+  @Field(() => Boolean)
+  backUp: boolean
 }
 
 @ObjectType()
@@ -201,4 +204,7 @@ export class CalendarDay {
 
   @Field(() => Events, { nullable: true })
   events: Events
+
+  @Field(() => Boolean)
+  backUp: boolean
 }
