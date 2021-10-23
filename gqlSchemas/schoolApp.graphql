@@ -12,7 +12,7 @@ type UserQuery {
   info: UserInfo!
   subjectMarks(subject: String!): [Marks!]!
   report: [Report!]!
-  marks(date: Date!): [Marks!]!
+  marks(dateTo: String!, dateFrom: String!): [Marks!]!
   daySchedule: [ScheduleEvent!]!
   calendarDay(date: String!): [CalendarDay!]!
   homeworks: [String!]!
@@ -28,7 +28,7 @@ type UserInfo {
 
 type Marks {
   name: String!
-  mark: String!
+  mark: String
   date: String!
   id: String!
   value: Value!
@@ -58,10 +58,6 @@ type Report {
   marks: String!
 }
 
-input Date {
-  date: [String!]!
-}
-
 type ScheduleEvent {
   name: String!
   timeFrom: String!
@@ -72,6 +68,7 @@ type ScheduleEvent {
   id: String!
   order: String!
   color: String!
+  backUp: Boolean!
 }
 
 type CalendarDay {
@@ -84,6 +81,7 @@ type CalendarDay {
   order: String!
   notes: Notes
   events: Events
+  backUp: Boolean!
 }
 
 type Notes {

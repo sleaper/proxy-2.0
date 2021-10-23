@@ -81,7 +81,7 @@ export class Marks {
   @Field(() => String)
   name: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   mark: string
 
   @Field(() => String)

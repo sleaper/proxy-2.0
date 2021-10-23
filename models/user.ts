@@ -150,9 +150,12 @@ export class UserQuery extends UserBase {
   }
 
   @Field(() => [Marks])
-  async marks(@Arg('date') date: Date) {
+  async marks(
+    @Arg('dateFrom') dateFrom: string,
+    @Arg('dateTo') dateTo: string
+  ) {
     const data = await fetch(
-      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?datumOd=${date[0]}&datumDo=${date[1]}`,
+      `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?datumOd=${dateFrom}&datumDo=${dateTo}`,
       {
         headers: {
           Authorization: `Basic ${this.key}`,
@@ -177,6 +180,7 @@ export class UserQuery extends UserBase {
     })
       //@ts-expect-error
       .sort((a, b) => new Date(b.Date) - new Date(a.Date))
+
     return marks
   }
 
@@ -400,13 +404,16 @@ export class UserQuery extends UserBase {
 
     const AvarageMarks = Marks.Data.HODNOCENI.map((item: AvarageMarkTypes) => {
       return {
-        subject: item.PREDMET_NAZEV,
+        subject:
+          item.PREDMET_NAZEV.length > 30
+            ? item.PREDMET_ZKRATKA
+            : item.PREDMET_NAZEV,
         teacher: item.UCITEL_NAZEV,
         marks: item.HODNOCENI_PRUMER_TEXT,
         id: item.PREDMET_ID
       }
     })
-
+    console.log(AvarageMarks)
     return AvarageMarks
   }
 }
