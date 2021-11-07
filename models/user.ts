@@ -63,7 +63,7 @@ export class UserQuery extends UserBase {
 
   @Field(() => [Marks])
   async subjectMarks(@Arg('subject') subject: string) {
-    const timeLine: any = await fetch(
+    const timeLine = await fetch(
       'https://aplikace.skolaonline.cz/SOLWebApi/api/v1/ObdobiRoku',
       {
         headers: {
@@ -239,7 +239,6 @@ export class UserQuery extends UserBase {
     })
     // This combines Events and normal lessons
     let final = editedLessons.map((item: any) => {
-      console.log(item)
       return {
         ...item,
         events: editedEvents.find((t2) => {
@@ -413,7 +412,7 @@ export class UserQuery extends UserBase {
         id: item.PREDMET_ID
       }
     })
-    console.log(AvarageMarks)
+
     return AvarageMarks
   }
 }

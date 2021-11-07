@@ -21,7 +21,7 @@ export class RootResolver {
         key: key
       }
     })
-    console.log(user)
+
     return user
   }
 
