@@ -28,14 +28,16 @@ model Homeworks {
   id            String @id @default(uuid())
   userFireToken String @unique
   data          Json
+  userId        String @unique
 
-  User User @relation(fields: [userFireToken], references: [firebaseToken], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Marks {
   id            String @id @default(uuid())
   userFireToken String @unique
   data          Json
+  userId        String @unique
 
-  User User @relation(fields: [userFireToken], references: [firebaseToken], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
