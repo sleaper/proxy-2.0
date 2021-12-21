@@ -3,15 +3,25 @@ import 'reflect-metadata'
 import fastify from 'fastify'
 import mercurius from 'mercurius'
 import { schema } from './schemas/schema'
-import { captureException, init as sentryInit } from '@sentry/node'
+import * as Sentry from '@sentry/node'
+import * as Tracing from '@sentry/tracing'
 import pkg from './package.json'
 import { GraphqlError } from './api/GraphqlError'
 import chalk from 'chalk'
+import { captureException } from '@sentry/node'
 
-sentryInit({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  release: `<project-name>@${pkg.version}`
+Sentry.init({
+  dsn: 'https://2e2de43cd4c14d2bb73661e3341290a8@o997900.ingest.sentry.io/5966709',
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0
+})
+
+const transaction = Sentry.startTransaction({
+  op: 'test',
+  name: 'My First Test Transaction'
 })
 
 async function main() {
