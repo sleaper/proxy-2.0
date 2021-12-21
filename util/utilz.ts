@@ -171,6 +171,27 @@ export let types = [
   }
 ]
 
+export async function startOfTheSchoolYear(key: string) {
+  const timeLine = await fetch(
+    'https://aplikace.skolaonline.cz/SOLWebApi/api/v1/ObdobiRoku',
+    {
+      headers: {
+        Authorization: `Basic ${key}`,
+        Base64: '1'
+      }
+    }
+  )
+    .then((response) => response.json())
+    .catch((err) => console.error())
+
+  // choose what half year is
+  if (getDate() > timeLine.Data[0].DATUM_DO) {
+    return timeLine.Data[1].DATUM_OD.substring(0, 10)
+  } else {
+    return timeLine.Data[0].DATUM_OD.substring(0, 10)
+  }
+}
+
 export async function fetchIndividualMarks(date, key) {
   const data = await fetch(
     `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?datumOd=${date[0]}&datumDo=${date[1]}`,

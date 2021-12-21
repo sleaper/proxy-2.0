@@ -11,7 +11,8 @@ import { prisma } from './prisma'
 import {
   fetchHomeworks,
   fetchIndividualMarks,
-  getStartEndOfWeek
+  getStartEndOfWeek,
+  startOfTheSchoolYear
 } from './util/utilz'
 
 sentryInit({
@@ -21,7 +22,6 @@ sentryInit({
 })
 
 const Notification = async () => {
-  console.log('TEST')
   let users = await prisma.user.findMany({})
 
   users.forEach(async (user) => {
@@ -33,7 +33,7 @@ const Notification = async () => {
     })
 
     let newMarks = await fetchIndividualMarks(
-      getStartEndOfWeek(),
+      startOfTheSchoolYear(user.key),
       user.key
     ).catch(async (e) => {
       if (e) {
@@ -41,15 +41,27 @@ const Notification = async () => {
       }
     })
 
-    if (newHomeworks.length > 0 || newMarks.length > 0) {
-      let homeworks = await prisma.homeworks.findUnique({
-        where: {
-          userId: user.id
-        }
-      })
+    //Get data from DB
+    let homeworks = await prisma.homeworks.findUnique({
+      where: {
+        userId: user.id
+      }
+    })
 
-      let marks = await prisma.marks.findUnique({
-        where: {
+    let marks = await prisma.marks.findUnique({
+      where: {
+        userId: user.id
+      }
+    })
+
+    //Check if there is data in DB
+    if (marks?.data) {
+      //Compare and save
+    } else {
+      await prisma.marks.create({
+        data: {
+          userFireToken: user.firebaseToken,
+          data: newMarks,
           userId: user.id
         }
       })
@@ -86,7 +98,7 @@ async function main() {
 
   app.listen(3000, '0.0.0.0')
 
-  setInterval(Notification, 2000)
+  setInterval(Notification, 5000)
 }
 
 main().then(() => {
