@@ -182,15 +182,15 @@ export class CalendarDay {
   name: string
 
   @Field(() => String)
-  from: string
+  timeFrom: string
 
   @Field(() => String)
-  to: string
+  timeTo: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   class: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   teacher: string
 
   @Field(() => ID)
@@ -205,6 +205,9 @@ export class CalendarDay {
   @Field(() => Events, { nullable: true })
   events: Events
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   backUp: boolean
+
+  @Field(() => String, { nullable: true })
+  type: string
 }

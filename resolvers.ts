@@ -16,7 +16,8 @@ export class RootResolver {
   async user(@Arg('key') key: string) {
     //We need upsert here
     // We call this on login, even when user is not in the DB
-    let user = await prisma.user.findFirst({
+
+    let user = await prisma.user.findUnique({
       where: {
         key: key
       }
@@ -79,6 +80,7 @@ export class RootResolver {
       })
       return true
     } catch (err) {
+      console.log(err)
       return false
     }
   }

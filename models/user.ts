@@ -285,12 +285,14 @@ export class UserQuery extends UserBase {
       }
     })
 
-    let events: [Event | null] = [null]
+    //@ts-expect-error
+    let events: [Event] = []
 
     const lessons: [Event] = data.Data.UDALOSTI.filter((item: Event) => {
       if (
         item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'ROZVRH' &&
         item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'SUPLOVANI'
+        // item.TYP_UDALOSTI.TYP_UDALOSTI_ID !== 'OBECNA_UDALOST'
       ) {
         events.push(item)
         return false
@@ -302,38 +304,51 @@ export class UserQuery extends UserBase {
       return {
         name: findName(item.NAZEV),
         //@ts-expect-error
-        from: item.CAS_OD.substring(11, 16), // get just starting time
-        to: item.CAS_DO,
+        timeFrom: item.CAS_OD.substring(11, 16), // get just starting time
+        //@ts-expect-error
+        timeTo: item.CAS_DO.substring(11, 16),
         class: item.MISTNOSTI_UDALOSTI[0].NAZEV,
         teacher:
-          item.UCITELE_UDALOSTI[0].JMENO +
-          ' ' +
-          item.UCITELE_UDALOSTI[0].PRIJMENI,
+          item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'ROZVRH'
+            ? item.UCITELE_UDALOSTI[0].JMENO +
+              ' ' +
+              item.UCITELE_UDALOSTI[0].PRIJMENI
+            : '',
         id: item.UDALOST_ID + item.PORADI,
         order: item.OBDOBI_DNE_OD_ID,
-        backUp: item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false
+        backUp:
+          item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false,
+        type: 'lesson'
       }
     })
 
     let editedEvents = events.map((t1) => {
       return {
-        event: t1?.NAZEV,
+        name: t1?.NAZEV,
         order: t1?.OBDOBI_DNE_OD_ID,
-        color: t1?.BARVA
+        color: t1?.BARVA,
+        orderTo: t1?.OBDOBI_DNE_DO_ID,
+        id: t1.UDALOST_ID,
+        //@ts-expect-error
+        timeFrom: t1.CAS_OD.substring(11, 16),
+        //@ts-expect-error
+        timeTo: t1.CAS_DO.substring(11, 16),
+        type: 'event'
       }
     })
 
-    let final = editedLessons.map((item) => {
-      return {
-        ...item,
-        events: editedEvents.find((t2) => t2.order === item.order),
-        notes: editedNotes.find(
-          (t2: { order: string; note: string }) => t2.order === item.order
-        )
-      }
-    })
+    // let final = editedLessons.map((item) => {
+    //   return {
+    //     ...item,
+    //     events: editedEvents.find((t2) => t2.order === item.order),
+    //     notes: editedNotes.find(
+    //       (t2: { order: string; note: string }) => t2.order === item.order
+    //     )
+    //   }
+    // })
 
-    return final
+    //@ts-expect-error
+    return editedLessons.concat(editedEvents).sort((a, b) => a.order - b.order)
   }
 
   //Need types here

@@ -73,15 +73,16 @@ type ScheduleEvent {
 
 type CalendarDay {
   name: String!
-  from: String!
-  to: String!
-  class: String!
-  teacher: String!
+  timeFrom: String!
+  timeTo: String!
+  class: String
+  teacher: String
   id: ID!
   order: String!
   notes: Notes
   events: Events
-  backUp: Boolean!
+  backUp: Boolean
+  type: String
 }
 
 type Notes {
