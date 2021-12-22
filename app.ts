@@ -37,11 +37,11 @@ const Notification = async () => {
 
   users.forEach(async (user) => {
     //FETCH FOR NEW DATA
-    let newHomeworks = await fetchHomeworks(user.key).catch(async (e) => {
-      if (e) {
-        console.log(e, user.name)
-      }
-    })
+    // let newHomeworks = await fetchHomeworks(user.key).catch(async (e) => {
+    //   if (e) {
+    //     console.log(e, user.name)
+    //   }
+    // })
 
     let newMarks = await fetchIndividualMarks(
       startOfTheSchoolYear(user.key),
@@ -53,11 +53,11 @@ const Notification = async () => {
     })
 
     //Get data from DB
-    let homeworks = await prisma.homeworks.findUnique({
-      where: {
-        userId: user.id
-      }
-    })
+    // let homeworks = await prisma.homeworks.findUnique({
+    //   where: {
+    //     userId: user.id
+    //   }
+    // })
 
     let marks = await prisma.marks.findUnique({
       where: {
@@ -80,18 +80,18 @@ const Notification = async () => {
             body: `Známka: ${mark}`
           }
         })
-        console.log('sended noti.')
+
+        const child = logger.child({ diff: diffs[0] })
+        child.info('Notification sended')
       } catch (error) {
-        const child = logger.child({ name: 'property' })
-        child.info('Invalid token')
+        const child = logger.child({ name: user.name })
+        child.info('Invalid firebase token')
 
         // if error remove the token
         await prisma.user.deleteMany({
           where: { firebaseToken: user.firebaseToken }
         })
       }
-
-      console.log(diffs)
     } else {
       await prisma.marks.create({
         data: {
