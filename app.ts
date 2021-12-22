@@ -9,11 +9,14 @@ import { GraphqlError } from './api/GraphqlError'
 import chalk from 'chalk'
 import { prisma } from './prisma'
 import {
+  Diffs,
   fetchHomeworks,
   fetchIndividualMarks,
-  getStartEndOfWeek,
   startOfTheSchoolYear
 } from './util/utilz'
+const logger = require('pino')()
+import admin from 'firebase-admin'
+import { data, newData } from './arr'
 
 sentryInit({
   dsn: process.env.SENTRY_DSN,
@@ -21,7 +24,15 @@ sentryInit({
   release: `proxy@${pkg.version}`
 })
 
+admin.initializeApp({
+  credential: admin.credential.cert(
+    './school-app-260e3-firebase-adminsdk-zmp06-a3c564e067.json'
+  ),
+  databaseURL: 'https://school-app-260e3.firebaseio.com'
+})
+
 const Notification = async () => {
+  logger.info('Notification check')
   let users = await prisma.user.findMany({})
 
   users.forEach(async (user) => {
@@ -57,6 +68,30 @@ const Notification = async () => {
     //Check if there is data in DB
     if (marks?.data) {
       //Compare and save
+      let diffs = Diffs(newMarks, marks.data)
+      let name = diffs[0].name
+      let mark = diffs[0].mark
+
+      try {
+        await admin.messaging().send({
+          token: user.firebaseToken,
+          notification: {
+            title: `Známka z ${name}`,
+            body: `Známka: ${mark}`
+          }
+        })
+        console.log('sended noti.')
+      } catch (error) {
+        const child = logger.child({ name: 'property' })
+        child.info('Invalid token')
+
+        // if error remove the token
+        await prisma.user.deleteMany({
+          where: { firebaseToken: user.firebaseToken }
+        })
+      }
+
+      console.log(diffs)
     } else {
       await prisma.marks.create({
         data: {

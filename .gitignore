@@ -1,3 +1,6 @@
 node_modules
 # Keep environment variables out of version control
 .env
+
+arr.js
+./school-app-260e3-firebase-adminsdk-zmp06-a3c564e067.json
