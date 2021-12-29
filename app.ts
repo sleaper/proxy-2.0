@@ -17,6 +17,7 @@ import {
 const logger = require('pino')()
 import admin from 'firebase-admin'
 import { data, newData } from './arr'
+import { Prisma } from '@prisma/client'
 
 sentryInit({
   dsn: process.env.SENTRY_DSN,
@@ -32,10 +33,13 @@ admin.initializeApp({
 })
 
 const Notification = async () => {
-  logger.info('Notification check')
   let users = await prisma.user.findMany({})
 
   users.forEach(async (user) => {
+    const child = logger.child({
+      user: user.name
+    })
+    child.info('Notification check')
     //FETCH FOR NEW DATA
     // let newHomeworks = await fetchHomeworks(user.key).catch(async (e) => {
     //   if (e) {
@@ -66,31 +70,65 @@ const Notification = async () => {
     })
 
     //Check if there is data in DB
-    if (marks?.data) {
+    if (
+      marks?.data &&
+      typeof marks?.data === 'object' &&
+      Array.isArray(marks?.data)
+    ) {
+      const marksObject = marks?.data as Prisma.JsonArray
       //Compare and save
-      let diffs = Diffs(newMarks, marks.data)
-      let name = diffs[0].name
-      let mark = diffs[0].mark
 
-      try {
-        await admin.messaging().send({
-          token: user.firebaseToken,
-          notification: {
-            title: `Známka z ${name}`,
-            body: `Známka: ${mark}`
+      //New Mark
+      if (newMarks.length > marksObject.length) {
+        let diffs = Diffs(newMarks, marks.data)
+        let name = diffs[0].name
+        let mark = diffs[0].mark
+
+        //save new marks
+        await prisma.marks.update({
+          where: {
+            userId: user.id
+          },
+          data: {
+            data: newMarks
           }
         })
 
-        const child = logger.child({ diff: diffs[0] })
-        child.info('Notification sended')
-      } catch (error) {
-        const child = logger.child({ name: user.name })
-        child.info('Invalid firebase token')
+        try {
+          await admin.messaging().send({
+            token: user.firebaseToken,
+            notification: {
+              title: `Známka z ${name}`,
+              body: `Známka: ${mark}`
+            }
+          })
 
-        // if error remove the token
-        await prisma.user.deleteMany({
-          where: { firebaseToken: user.firebaseToken }
+          const child = logger.child({
+            diff: diffs[0],
+            description: 'new mark'
+          })
+          child.info('Notification sended')
+        } catch (error) {
+          const child = logger.child({ name: user.name })
+          child.info('Invalid firebase token')
+
+          // if error remove the token
+          await prisma.user.deleteMany({
+            where: { firebaseToken: user.firebaseToken }
+          })
+        }
+
+        //Marks removed and updated
+      } else if (newMarks.length < marksObject.length) {
+        await prisma.marks.update({
+          where: {
+            userId: user.id
+          },
+          data: {
+            data: newMarks
+          }
         })
+        logger.info('Marks updated')
       }
     } else {
       await prisma.marks.create({
@@ -100,6 +138,7 @@ const Notification = async () => {
           userId: user.id
         }
       })
+      logger.info('Saving new data')
     }
   })
 }
