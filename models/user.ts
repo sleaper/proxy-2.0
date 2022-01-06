@@ -77,7 +77,8 @@ export class UserQuery extends UserBase {
 
     let date = []
     // choose what half year is
-    if (getDate() > timeLine.Data[0].DATUM_DO) {
+    //@ts-expect-error
+    if (new Date(getDate()) > new Date(timeLine.Data[0].DATUM_DO)) {
       //@ts-expect-error
       date.push(timeLine.Data[1].DATUM_OD)
       //@ts-expect-error
@@ -277,7 +278,7 @@ export class UserQuery extends UserBase {
     )
       .then((res) => res.json())
       .catch((err) => console.error())
-
+    console.log(notes)
     const editedNotes = notes.Data.map((t1: NoteTypes) => {
       return {
         note: t1.POZNAMKA,
@@ -318,7 +319,11 @@ export class UserQuery extends UserBase {
         order: item.OBDOBI_DNE_OD_ID,
         backUp:
           item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false,
-        type: 'lesson'
+        type: 'lesson',
+        notes: editedNotes.find(
+          (t2: { order: string; note: string }) =>
+            t2.order === item.OBDOBI_DNE_OD_ID
+        )
       }
     })
 
@@ -442,7 +447,8 @@ export class UserMutation extends UserBase {
     return await prisma.homeworks.upsert({
       create: {
         data: payload,
-        userFireToken: firebaseToken
+        userFireToken: firebaseToken,
+        userId: this.id
       },
       where: {
         userFireToken: firebaseToken

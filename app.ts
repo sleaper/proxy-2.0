@@ -172,7 +172,7 @@ async function main() {
 
   app.listen(3000, '0.0.0.0')
 
-  setInterval(Notification, 5000)
+  setInterval(Notification, 15000)
 }
 
 main().then(() => {
