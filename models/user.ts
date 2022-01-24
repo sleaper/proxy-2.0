@@ -29,7 +29,7 @@ export class UserBase {
 }
 
 @InputType()
-export class Date {
+export class DateInput {
   @Field(() => [String, String])
   date: [string, string]
 }
@@ -77,7 +77,7 @@ export class UserQuery extends UserBase {
 
     let date = []
     // choose what half year is
-    //@ts-expect-error
+
     if (new Date(getDate()) > new Date(timeLine.Data[0].DATUM_DO)) {
       //@ts-expect-error
       date.push(timeLine.Data[1].DATUM_OD)
@@ -106,7 +106,7 @@ export class UserQuery extends UserBase {
       return {
         name: item.NAZEV,
         mark: item.VYSLEDEK,
-        date: item.DATUM.substring(0, 10),
+        date: item.DATUM,
         id: item.UDALOST_ID,
         value: types.find(
           (t2) => t2.DRUH_HODNOCENI_ID === item.DRUH_HODNOCENI_ID
@@ -171,7 +171,7 @@ export class UserQuery extends UserBase {
       return {
         name: item.NAZEV,
         mark: item.VYSLEDEK,
-        date: item.DATUM.substring(0, 10),
+        date: item.DATUM,
         id: item.UDALOST_ID,
         value: types.find(
           (t2) => t2.DRUH_HODNOCENI_ID === item.DRUH_HODNOCENI_ID
@@ -278,7 +278,7 @@ export class UserQuery extends UserBase {
     )
       .then((res) => res.json())
       .catch((err) => console.error())
-    console.log(notes)
+
     const editedNotes = notes.Data.map((t1: NoteTypes) => {
       return {
         note: t1.POZNAMKA,
@@ -390,7 +390,6 @@ export class UserQuery extends UserBase {
       })
 
       let filteredByTime = editedHomeworks.filter((item) => {
-        //@ts-expect-error
         if (Date.now() < Date.parse(item.timeTo)) {
           return true
         }
@@ -423,10 +422,8 @@ export class UserQuery extends UserBase {
 
     const AvarageMarks = Marks.Data.HODNOCENI.map((item: AvarageMarkTypes) => {
       return {
-        subject:
-          item.PREDMET_NAZEV.length > 30
-            ? item.PREDMET_ZKRATKA
-            : item.PREDMET_NAZEV,
+        subjectName: item.PREDMET_NAZEV,
+        subjectNameShort: item.PREDMET_ZKRATKA,
         teacher: item.UCITEL_NAZEV,
         marks: item.HODNOCENI_PRUMER_TEXT,
         id: item.PREDMET_ID

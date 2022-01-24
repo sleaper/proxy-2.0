@@ -145,7 +145,10 @@ export class ScheduleEvent {
 @ObjectType()
 export class AvarageMark {
   @Field(() => String)
-  subject: string
+  subjectName: string
+
+  @Field(() => String)
+  subjectNameShort: string
 
   @Field(() => String)
   teacher: string

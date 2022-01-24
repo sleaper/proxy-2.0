@@ -97,7 +97,8 @@ type Events {
 }
 
 type AvarageMark {
-  subject: String!
+  subjectName: String!
+  subjectNameShort: String!
   teacher: String!
   marks: String!
   id: String!

@@ -8,15 +8,9 @@ import pkg from './package.json'
 import { GraphqlError } from './api/GraphqlError'
 import chalk from 'chalk'
 import { prisma } from './prisma'
-import {
-  Diffs,
-  fetchHomeworks,
-  fetchIndividualMarks,
-  startOfTheSchoolYear
-} from './util/utilz'
+import { Diffs, fetchIndividualMarks, startOfTheSchoolYear } from './util/utilz'
 const logger = require('pino')()
 import admin from 'firebase-admin'
-import { data, newData } from './arr'
 import { Prisma } from '@prisma/client'
 
 sentryInit({
@@ -172,7 +166,7 @@ async function main() {
 
   app.listen(3000, '0.0.0.0')
 
-  setInterval(Notification, 15000)
+  //setInterval(Notification, 15000)
 }
 
 main().then(() => {
