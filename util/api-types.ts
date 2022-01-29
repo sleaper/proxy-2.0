@@ -143,3 +143,17 @@ export interface NoteTypes {
   UCITEL_NAZEV: string
   POZNAMKA: string
 }
+
+export interface MarkInDB {
+  Id: string
+  Date: string
+  Mark: string
+  Name: string
+  Value: {
+    VAHA: number
+    NAZEV: string
+    POPIS: string
+    PORADI_ZOBRAZENI: number
+    DRUH_HODNOCENI_ID: string
+  }
+}

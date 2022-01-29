@@ -17,6 +17,7 @@
         "inlineSources": true,
         "types": [
             "node",
+            "jest"
         ],
         "forceConsistentCasingInFileNames": true,
         "suppressImplicitAnyIndexErrors": true,

@@ -78,5 +78,13 @@ export const newData = [
     Color: '#ae259d',
     Active: true,
     TimeTo: '2021-03-30T23:59:00'
+  },
+  {
+    id: '87e942626b-5802-4baf-93af-501361a614d7',
+    Info: '<p>nau&#269;it se</p>',
+    Name: 'test',
+    Color: '#ae259d',
+    Active: true,
+    TimeTo: '2021-03-30T23:59:00'
   }
 ]
