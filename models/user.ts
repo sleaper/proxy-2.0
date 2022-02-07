@@ -63,31 +63,15 @@ export class UserQuery extends UserBase {
 
   @Field(() => [Marks])
   async subjectMarks(@Arg('subject') subject: string) {
-    const timeLine = await fetch(
-      'https://aplikace.skolaonline.cz/SOLWebApi/api/v1/ObdobiRoku',
-      {
-        headers: {
-          Authorization: `Basic ${this.key}`,
-          Base64: '1'
-        }
-      }
-    )
-      .then((response) => response.json())
-      .catch((err) => console.error())
-
-    let date = []
-    // choose what half year is
-
-    if (new Date(getDate()) > new Date(timeLine.Data[0].DATUM_DO)) {
-      //@ts-expect-error
-      date.push(timeLine.Data[1].DATUM_OD)
-      //@ts-expect-error
-      date.push(timeLine.Data[1].DATUM_DO)
+    let date: string[] = []
+    // choose what half year/term is
+    //TODO: make time dynamic
+    if (new Date(getDate()) > new Date('2022-01-31T00:00:00')) {
+      date.push('2022-01-31T00:00:00')
+      date.push('2022-06-30T00:00:00')
     } else {
-      //@ts-expect-error
-      date.push(timeLine.Data[0].DATUM_OD)
-      //@ts-expect-error
-      date.push(timeLine.Data[0].DATUM_DO)
+      date.push('2021-09-01T00:00:00')
+      date.push('2022-01-31T00:00:00')
     }
 
     const data = await fetch(
