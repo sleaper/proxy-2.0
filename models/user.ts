@@ -285,6 +285,7 @@ export class UserQuery extends UserBase {
       return true
     })
 
+    console.log(lessons[0].t)
     let editedLessons = lessons.map((item) => {
       return {
         name: findName(item.NAZEV),
@@ -294,15 +295,12 @@ export class UserQuery extends UserBase {
         timeTo: item.CAS_DO.substring(11, 16),
         class: item.MISTNOSTI_UDALOSTI[0].NAZEV,
         teacher:
-          item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'ROZVRH'
-            ? item.UCITELE_UDALOSTI[0].JMENO +
-              ' ' +
-              item.UCITELE_UDALOSTI[0].PRIJMENI
-            : '',
+          item.UCITELE_UDALOSTI[0].JMENO +
+          ' ' +
+          item.UCITELE_UDALOSTI[0].PRIJMENI,
         id: item.UDALOST_ID + item.PORADI,
         order: item.OBDOBI_DNE_OD_ID,
-        backUp:
-          item.TYP_UDALOSTI.TYP_UDALOSTI_ID === 'SUPLOVANI' ? true : false,
+        color: item.BARVA,
         type: 'lesson',
         notes: editedNotes.find(
           (t2: { order: string; note: string }) =>

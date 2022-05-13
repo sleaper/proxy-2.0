@@ -81,7 +81,7 @@ type CalendarDay {
   order: String!
   notes: Notes
   events: Events
-  backUp: Boolean
+  color: String
   type: String
 }
 

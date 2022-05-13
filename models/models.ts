@@ -208,8 +208,8 @@ export class CalendarDay {
   @Field(() => Events, { nullable: true })
   events: Events
 
-  @Field(() => Boolean, { nullable: true })
-  backUp: boolean
+  @Field(() => String, { nullable: true })
+  color: string
 
   @Field(() => String, { nullable: true })
   type: string
